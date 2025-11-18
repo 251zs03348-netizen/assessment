@@ -8,34 +8,46 @@ assessmentButton.addEventListener(
   'click', //クリックイベント
   () => { //無名関数でアロー関数
     const userName = userNameInput.value; //入力欄
-    if(userName.length === 0){ //入力が空だったら
+    if (userName.length === 0) { //入力が空だったら
       //名前が空の時は処理を終了する
       return; //関数の処理を終了する
     }
-    
-    if(resultDivision.firstChild){
+
+    if (resultDivision.firstChild) {
       resultDivision.removeChild(resultDivision.firstChild)
     }
 
     // 診断結果エリアの作成
-    resultDivision.innerText = '';//divタグを空文字で上書きすることで、空にしている
-    tweetDivision.innerText = '';// tweetのdivタグも空にする
-    const header = document.createElement('h3');//h3タグの作成
-    header.innerText = '診断結果';//タグの内側のテキストを設定
-    resultDivision.appendChild(header);//divタグの子要素として追加
+    resultDivision.innerText = "";//divタグを空文字で上書きすることで、空にしている
+
+    //headerDivisionの作成
+    const headerDivisiton = document.createElement('div');
+    headerDivisiton.setAttribute('class', 'card-header text-bg-primary');
+    headerDivisiton.innerText = '診断結果';
+
+    //bodyDivisionの作成
+    const bodyDivision = document.createElement('div');
+    bodyDivision.setAttribute('class', 'card-body');
 
     const paragraph = document.createElement('p');//pタグの作成
     const result = assessment(userName);//診断結果の作成
     paragraph.innerText = result;//pタグの内側のテキストを設定
-    resultDivision.appendChild(paragraph);//divタグの子要素としてpタグを追加
+    bodyDivision.appendChild(paragraph);//divタグの子要素としてpタグを追加
+
+    //resultDivisionにBootstrapのスタイルを適用する
+    resultDivision.setAttribute('class', 'card');
+
+    //headerDivisionとbodyDivisionをresultDivisionに差し込む
+    resultDivision.appendChild(headerDivisiton);
+    resultDivision.appendChild(bodyDivision);
 
     // ツイートエリア（X投稿ボタン）の作成
     tweetDivision.innerText = ''
     const anchor = document.createElement('a');
     const hrefValue =
-     'https://twitter.com/intent/tweet?button_hashtag' +
-    encodeURIComponent('あなたのいいところ') +
-    '&ref_src=twsrc%5Etfw';
+      'https://twitter.com/intent/tweet?button_hashtag' +
+      encodeURIComponent('あなたのいいところ') +
+      '&ref_src=twsrc%5Etfw';
 
     anchor.setAttribute('href', hrefValue);
     anchor.setAttribute('class', 'twitter-hashtag-button');
@@ -55,7 +67,7 @@ assessmentButton.addEventListener(
 userNameInput.addEventListener( //イベント検知の追加
   'keydown',
   (event) => {
-    if(event.code === 'Enter'){
+    if (event.code === 'Enter') {
       assessmentButton.dispatchEvent(new Event('click'))
     }
   }
@@ -85,23 +97,23 @@ const answers = [
  * @param {string} userName ユーザの名前
  * @return {string} 診断結果
  */
-function assessment(userName){
+function assessment(userName) {
   //全文字のコード番号を取得してそれを足し合わせる
   let sumOFCherCode = 0;
-  for(let i = 0; i < userName.length; i++){
+  for (let i = 0; i < userName.length; i++) {
     sumOFCherCode = sumOFCherCode + userName.charCodeAt(i);
   }
 
   //文字コード番号の合計を回答の数で割って添字の数値を求める
   const index = sumOFCherCode % answers.length;
   let result = answers[index];
-  
-  result = result.replaceAll('###userName###',userName)
+
+  result = result.replaceAll('###userName###', userName)
   return result;
 }
 
 //テストで使う関数
-function test(){
+function test() {
   console.log('診断結果の文章のテスト');
 
   //太郎
@@ -138,13 +150,13 @@ function test(){
     '入力が同じ名前なら同じ診断結果を出力する処理が正しくありません。'
   );
 
-   console.log('次郎');
+  console.log('次郎');
   console.assert(
     assessment('次郎') === assessment('次郎'),
     '入力が同じ名前なら同じ診断結果を出力する処理が正しくありません。'
   );
 
-   console.log('花子');
+  console.log('花子');
   console.assert(
     assessment('花子') === assessment('花子'),
     '入力が同じ名前なら同じ診断結果を出力する処理が正しくありません。'
